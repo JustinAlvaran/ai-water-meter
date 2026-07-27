@@ -86,7 +86,14 @@ export function createChatObserver(
     lastResponseCharCount = endChat.responseCharCount;
   };
 
-  const handleMutation = () => {
+  let pendingMutation = false;
+  let rafId: number | undefined;
+
+  const processMutationBatch = () => {
+    rafId = undefined;
+    if (!pendingMutation) return;
+    pendingMutation = false;
+
     // Disconnect observer immediately if the extension context was invalidated
     if (typeof chrome === "undefined" || !chrome.runtime || !chrome.runtime.id) {
       observer.disconnect();
@@ -137,6 +144,17 @@ export function createChatObserver(
 
       window.clearTimeout(debounceTimer);
       debounceTimer = window.setTimeout(handleDebounce, 1500);
+    }
+  };
+
+  const handleMutation = () => {
+    if (typeof chrome === "undefined" || !chrome.runtime || !chrome.runtime.id) {
+      observer.disconnect();
+      return;
+    }
+    pendingMutation = true;
+    if (!rafId) {
+      rafId = window.requestAnimationFrame(processMutationBatch);
     }
   };
 

@@ -262,6 +262,9 @@ export function mountSidebar(
   let currentStatus = "Estimates stay local in your browser.";
   let currentUserEmail: string | undefined;
 
+  let lastRenderTime = 0;
+  let renderTimer: number | undefined;
+
   const render = () => {
     root.render(
       <SidebarApp
@@ -279,6 +282,24 @@ export function mountSidebar(
     );
   };
 
+  const renderThrottled = (forceImmediate = false) => {
+    const now = Date.now();
+    if (forceImmediate || now - lastRenderTime >= 100) {
+      if (renderTimer) {
+        window.clearTimeout(renderTimer);
+        renderTimer = undefined;
+      }
+      lastRenderTime = now;
+      render();
+    } else if (!renderTimer) {
+      renderTimer = window.setTimeout(() => {
+        renderTimer = undefined;
+        lastRenderTime = Date.now();
+        render();
+      }, 100);
+    }
+  };
+
   render();
 
   return {
@@ -290,15 +311,16 @@ export function mountSidebar(
       if (userEmail !== undefined) {
         currentUserEmail = userEmail;
       }
-      render();
+      // Force immediate render on stream completion or initial state; throttle streaming updates
+      renderThrottled(!snapshot.isStreaming);
     },
     setStatus(message) {
       currentStatus = message;
-      render();
+      renderThrottled(true);
     },
     setUserEmail(email) {
       currentUserEmail = email;
-      render();
+      renderThrottled(true);
     }
   };
 }
