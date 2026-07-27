@@ -1,33 +1,42 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;850;900&family=Space+Grotesk:wght@400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap");
 
 :root {
-  /* Surface Hierarchy (Linear & Geist Dark Mode System) */
-  --surface-base: #080b11;
-  --surface-panel: #0f1420;
-  --surface-card: #161d2f;
-  --surface-hover: #1e263d;
+  /* Cute, Charming & Understandable (Kawaii-Eco System) */
+  --surface-base: #141a29;
+  --surface-panel: #1d263b;
+  --surface-card: #27324b;
+  --surface-hover: #323f5e;
 
-  /* Border & Glow System */
+  /* Kawaii Eco Color Palette */
+  --color-mint: #6ee7b7;
+  --color-mint-glow: rgba(110, 231, 183, 0.2);
+  --color-sky: #60a5fa;
+  --color-sky-glow: rgba(96, 165, 250, 0.2);
+  --color-gold: #fde047;
+  --color-gold-glow: rgba(253, 224, 71, 0.2);
+  --color-pink: #f472b6;
+
+  /* Legacy Color Compatibility */
+  --color-bg: #141a29;
+  --color-panel: #1d263b;
+  --color-cyan: #6ee7b7;
+  --color-cyan-glow: rgba(110, 231, 183, 0.2);
+  --color-blue: #60a5fa;
+  --color-blue-glow: rgba(96, 165, 250, 0.2);
+  --color-teal: #34d399;
+  --color-teal-glow: rgba(52, 211, 153, 0.2);
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(0, 240, 255, 0.3);
-  --color-border: rgba(0, 240, 255, 0.12);
-  --color-border-light: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(110, 231, 183, 0.35);
 
-  /* Color System */
-  --color-bg: #080b11;
-  --color-panel: #0f1420;
-  --color-cyan: #00f0ff;
-  --color-cyan-glow: rgba(0, 240, 255, 0.18);
-  --color-blue: #3b82f6;
-  --color-blue-glow: rgba(59, 130, 246, 0.15);
-  --color-teal: #0df2a7;
-  --color-teal-glow: rgba(13, 242, 167, 0.15);
-  --color-text-primary: #f9fafb;
-  --color-text-secondary: #9ca3af;
-  --color-text-muted: #6b7280;
+  /* Rounded Radii */
+  --radius-card: 16px;
+  --radius-pill: 9999px;
 
   /* Fonts */
-  --font-display: "Space Grotesk", sans-serif;
+  --font-display: "Outfit", "Space Grotesk", sans-serif;
   --font-body: "Outfit", sans-serif;
   --font-mono: "Space Mono", monospace;
 

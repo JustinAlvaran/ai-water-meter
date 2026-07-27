@@ -908,9 +908,9 @@ export const TelemetryKnowledgeGraph: React.FC<TelemetryKnowledgeGraphProps> = (
         <div
           style={{
             marginTop: "12px",
-            background: "rgba(0, 0, 0, 0.25)",
-            border: "1px solid var(--color-border-light)",
-            borderRadius: "6px",
+            background: "var(--surface-panel)",
+            border: "1.5px solid var(--color-mint-glow)",
+            borderRadius: "16px",
             padding: "10px 14px",
             display: "flex",
             justifyContent: "space-between",
