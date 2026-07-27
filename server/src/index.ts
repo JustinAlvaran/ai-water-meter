@@ -203,6 +203,18 @@ fastify.get("/api/badge/:displayName", async (request, reply) => {
       }
     }
 
+    // Helper function to sanitize text inserted into SVG nodes
+    const sanitizeSvgText = (str: string): string => {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    };
+
+    const safeDisplayNameInput = sanitizeSvgText(displayNameInput);
+
     // If user not found, render a beautiful "User Not Registered" SVG badge
     if (!userRow) {
       const notFoundSvg = `
@@ -220,7 +232,7 @@ fastify.get("/api/badge/:displayName", async (request, reply) => {
           <g transform="translate(15, 30)">
             <text x="0" y="0" class="title-text">⚡ AI WATER METER</text>
             <text x="0" y="24" class="label">STATUS</text>
-            <text x="0" y="44" class="value" fill="#9ca3af">Explorer '${displayNameInput}' Not Found</text>
+            <text x="0" y="44" class="value" fill="#9ca3af">Explorer '${safeDisplayNameInput}' Not Found</text>
           </g>
         </svg>
       `.trim();
@@ -230,6 +242,7 @@ fastify.get("/api/badge/:displayName", async (request, reply) => {
     }
 
     const { user_id, display_name } = userRow;
+    const safeDisplayName = sanitizeSvgText(display_name);
 
     // 2. Fetch Leaderboard Rank, Score, and Water Saved
     let rank = "Unranked";
@@ -324,7 +337,7 @@ fastify.get("/api/badge/:displayName", async (request, reply) => {
         <text x="48" y="58" text-anchor="middle" class="rank-val">${rank}</text>
         <!-- Stats list -->
         <text x="100" y="30" class="label">Explorer</text>
-        <text x="200" y="30" class="value">${display_name}</text>
+        <text x="200" y="30" class="value">${safeDisplayName}</text>
         
         <text x="100" y="52" class="label">Water Saved</text>
         <text x="200" y="52" class="value" fill="#0df2a7">${formattedWater}</text>

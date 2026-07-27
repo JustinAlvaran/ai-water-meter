@@ -43,6 +43,18 @@ chrome.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) =
 
 async function handleStorageRequest(message: StorageRequest): Promise<StorageResponse> {
   if (message.type === "usage:add-delta") {
+    // Strix Anti-Spoofing: Validate estimate sanity limits
+    const est = message.estimate;
+    if (
+      !est ||
+      typeof est.outputTokens !== "number" ||
+      est.outputTokens < 0 ||
+      est.outputTokens > 100000 ||
+      (typeof est.totalWaterMl === "number" && est.totalWaterMl > 50000)
+    ) {
+      return { ok: false, error: "Abnormal or invalid telemetry payload rejected." };
+    }
+
     const daily = await addToDailyUsage(message.estimate);
     const monthly = await getMonthlyUsage();
     try {

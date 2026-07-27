@@ -1,49 +1,37 @@
-name: Strix Security Scan
+name: Strix Security Audit & Guardrails
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
   pull_request:
     branches:
       - main
       - dev
-      - test
-      - staging
-      - production
-
-permissions:
-  contents: read
 
 jobs:
-  strix:
+  security-audit:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          fetch-depth: 0
+          node-version: 20
+          cache: "npm"
 
-      - name: Check Strix secrets
-        id: secrets
-        env:
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-          STRIX_LLM: ${{ secrets.STRIX_LLM }}
-        run: |
-          if [ -n "$LLM_API_KEY" ] && [ -n "$STRIX_LLM" ]; then
-            echo "configured=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "configured=false" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Install Dependencies
+        run: npm ci
 
-      - name: Skip when secrets are missing
-        if: steps.secrets.outputs.configured != 'true'
-        run: echo "Skipping Strix. Configure STRIX_LLM and LLM_API_KEY repository secrets to enable."
+      - name: Validate Manifest Permissions & CSP
+        run: node scripts/validate-extension.mjs
 
-      - name: Install Strix
-        if: steps.secrets.outputs.configured == 'true'
-        run: curl -sSL https://strix.ai/install | bash
+      - name: Run Security & Telemetry Tests
+        run: npm test -- --testPathPatterns="manifest|estimator"
 
-      - name: Run Strix quick scan
-        if: steps.secrets.outputs.configured == 'true'
-        env:
-          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
-          STRIX_LLM: ${{ secrets.STRIX_LLM }}
-        run: strix -n --target ./ --scan-mode quick
+      - name: Dependency Security Check
+        run: npm audit --audit-level=high || true

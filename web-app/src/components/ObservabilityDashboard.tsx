@@ -637,6 +637,327 @@ export const Mascot: React.FC<MascotProps> = ({ state, customMessage, onTipsCycl
   );
 };
 
+// 6.5 AI Footprint Knowledge Graph (Inspired by Understand-Anything)
+interface KnowledgeNode {
+  id: string;
+  label: string;
+  category: "platform" | "model" | "impact";
+  x: number;
+  y: number;
+  val: string;
+  details: string;
+}
+
+interface TelemetryKnowledgeGraphProps {
+  totalWaterMl: number;
+  totalEnergyWh: number;
+  isStreaming?: boolean;
+}
+
+export const TelemetryKnowledgeGraph: React.FC<TelemetryKnowledgeGraphProps> = ({
+  totalWaterMl,
+  totalEnergyWh,
+  isStreaming
+}) => {
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>("water_direct");
+
+  const nodes: KnowledgeNode[] = [
+    // Layer 1: Platforms
+    {
+      id: "plat_chatgpt",
+      label: "ChatGPT",
+      category: "platform",
+      x: 60,
+      y: 40,
+      val: "Browser",
+      details: "Direct web chat session stream"
+    },
+    {
+      id: "plat_claude",
+      label: "Claude AI",
+      category: "platform",
+      x: 60,
+      y: 100,
+      val: "Browser",
+      details: "Anthropic web assistant stream"
+    },
+    {
+      id: "plat_gemini",
+      label: "Gemini",
+      category: "platform",
+      x: 60,
+      y: 160,
+      val: "Browser",
+      details: "Google AI chat interface"
+    },
+    {
+      id: "plat_vscode",
+      label: "VS Code",
+      category: "platform",
+      x: 60,
+      y: 220,
+      val: "IDE",
+      details: "Copilot / inline completions observer"
+    },
+
+    // Layer 2: Models
+    {
+      id: "mod_gpt4o",
+      label: "GPT-4o",
+      category: "model",
+      x: 230,
+      y: 60,
+      val: "Omni",
+      details: "High-throughput multimodal inference engine"
+    },
+    {
+      id: "mod_claude35",
+      label: "Sonnet 3.5",
+      category: "model",
+      x: 230,
+      y: 130,
+      val: "Sonnet",
+      details: "Complex reasoning & coding model"
+    },
+    {
+      id: "mod_gemini15",
+      label: "Gemini 1.5",
+      category: "model",
+      x: 230,
+      y: 200,
+      val: "Pro",
+      details: "Long-context window processing"
+    },
+
+    // Layer 3: Impact
+    {
+      id: "water_direct",
+      label: "Direct Cooling",
+      category: "impact",
+      x: 400,
+      y: 50,
+      val: `${(totalWaterMl * 0.15).toFixed(1)} mL`,
+      details: "Data center evaporative tower cooling"
+    },
+    {
+      id: "water_indirect",
+      label: "Grid Water",
+      category: "impact",
+      x: 400,
+      y: 110,
+      val: `${(totalWaterMl * 0.85).toFixed(1)} mL`,
+      details: "Thermal power plant water footprint"
+    },
+    {
+      id: "energy_wh",
+      label: "Power Energy",
+      category: "impact",
+      x: 400,
+      y: 170,
+      val: `${totalEnergyWh.toFixed(1)} Wh`,
+      details: "GPU compute & server rack electricity"
+    },
+    {
+      id: "co2_grams",
+      label: "CO₂ Grams",
+      category: "impact",
+      x: 400,
+      y: 230,
+      val: `${(totalEnergyWh * 0.33).toFixed(2)} g`,
+      details: "Estimated carbon intensity emissions"
+    }
+  ];
+
+  const connections = [
+    { from: "plat_chatgpt", to: "mod_gpt4o" },
+    { from: "plat_claude", to: "mod_claude35" },
+    { from: "plat_gemini", to: "mod_gemini15" },
+    { from: "plat_vscode", to: "mod_gpt4o" },
+    { from: "plat_vscode", to: "mod_claude35" },
+
+    { from: "mod_gpt4o", to: "water_direct" },
+    { from: "mod_gpt4o", to: "energy_wh" },
+    { from: "mod_claude35", to: "water_indirect" },
+    { from: "mod_claude35", to: "co2_grams" },
+    { from: "mod_gemini15", to: "water_direct" },
+    { from: "mod_gemini15", to: "energy_wh" }
+  ];
+
+  const selectedNode = nodes.find((n) => n.id === selectedNodeId) || nodes[0];
+
+  return (
+    <div
+      className="bento-card knowledge-graph-card"
+      style={{
+        marginTop: "var(--space-md)",
+        padding: "var(--space-md)",
+        border: "1px solid rgba(0, 240, 255, 0.15)",
+        borderRadius: "8px"
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "12px"
+        }}
+      >
+        <div>
+          <h3 style={{ margin: 0, fontSize: "1rem", color: "var(--color-cyan)" }}>
+            🕸️ AI Footprint Topology Graph
+          </h3>
+          <span style={{ fontSize: "0.75rem", color: "var(--color-text-secondary)" }}>
+            Explore interactions between platforms, model architectures, and footprints
+          </span>
+        </div>
+        <span
+          style={{
+            fontSize: "0.7rem",
+            fontFamily: "var(--font-mono)",
+            background: isStreaming ? "rgba(13, 242, 167, 0.15)" : "rgba(255, 255, 255, 0.05)",
+            color: isStreaming ? "var(--color-teal)" : "var(--color-text-muted)",
+            padding: "2px 8px",
+            borderRadius: "4px",
+            border: `1px solid ${isStreaming ? "rgba(13, 242, 167, 0.3)" : "rgba(255, 255, 255, 0.1)"}`
+          }}
+        >
+          {isStreaming ? "● LIVE STREAMING" : "○ SYNCED"}
+        </span>
+      </div>
+
+      <div style={{ position: "relative", width: "100%", overflowX: "auto" }}>
+        <svg width="480" height="270" style={{ display: "block", margin: "0 auto" }}>
+          {/* Connection Lines */}
+          {connections.map((c, i) => {
+            const source = nodes.find((n) => n.id === c.from);
+            const target = nodes.find((n) => n.id === c.to);
+            if (!source || !target) return null;
+
+            const isHighlighted = selectedNodeId === source.id || selectedNodeId === target.id;
+            const pathD = `M ${source.x} ${source.y} C ${source.x + 60} ${source.y}, ${target.x - 60} ${target.y}, ${target.x} ${target.y}`;
+
+            return (
+              <path
+                key={i}
+                d={pathD}
+                fill="none"
+                stroke={isHighlighted ? "var(--color-cyan)" : "rgba(255,255,255,0.12)"}
+                strokeWidth={isHighlighted ? "2" : "1"}
+                strokeDasharray={isStreaming ? "4,4" : "none"}
+                style={{
+                  transition: "stroke 0.3s ease, stroke-width 0.3s ease"
+                }}
+              />
+            );
+          })}
+
+          {/* Graph Nodes */}
+          {nodes.map((node) => {
+            const isSelected = selectedNodeId === node.id;
+            let fill: string;
+            let stroke: string;
+
+            if (node.category === "platform") {
+              fill = "rgba(0, 120, 255, 0.15)";
+              stroke = isSelected ? "var(--color-blue)" : "rgba(0, 120, 255, 0.4)";
+            } else if (node.category === "model") {
+              fill = "rgba(13, 242, 167, 0.15)";
+              stroke = isSelected ? "var(--color-teal)" : "rgba(13, 242, 167, 0.4)";
+            } else {
+              fill = "rgba(0, 240, 255, 0.15)";
+              stroke = isSelected ? "var(--color-cyan)" : "rgba(0, 240, 255, 0.4)";
+            }
+
+            return (
+              <g
+                key={node.id}
+                transform={`translate(${node.x}, ${node.y})`}
+                onClick={() => setSelectedNodeId(node.id)}
+                style={{ cursor: "pointer" }}
+              >
+                <circle
+                  r={isSelected ? 16 : 12}
+                  fill={fill}
+                  stroke={stroke}
+                  strokeWidth={isSelected ? 2 : 1}
+                  style={{ transition: "all 0.2s ease" }}
+                />
+                <text
+                  x="0"
+                  y="22"
+                  textAnchor="middle"
+                  fill={isSelected ? "#ffffff" : "var(--color-text-secondary)"}
+                  fontSize="9.5"
+                  fontFamily="var(--font-mono)"
+                  fontWeight={isSelected ? "bold" : "normal"}
+                >
+                  {node.label}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Selected Node Details Panel */}
+      {selectedNode && (
+        <div
+          style={{
+            marginTop: "12px",
+            background: "rgba(0, 0, 0, 0.25)",
+            border: "1px solid var(--color-border-light)",
+            borderRadius: "6px",
+            padding: "10px 14px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "8px"
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontSize: "0.7rem",
+                fontFamily: "var(--font-mono)",
+                color: "var(--color-cyan)",
+                textTransform: "uppercase"
+              }}
+            >
+              Node Selected: {selectedNode.label} ({selectedNode.category})
+            </span>
+            <p
+              style={{
+                margin: "2px 0 0 0",
+                fontSize: "0.8rem",
+                color: "var(--color-text-secondary)"
+              }}
+            >
+              {selectedNode.details}
+            </p>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span style={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>
+              Current Metric
+            </span>
+            <strong
+              style={{
+                display: "block",
+                fontSize: "1rem",
+                color: "#fff",
+                fontFamily: "var(--font-mono)"
+              }}
+            >
+              {selectedNode.val}
+            </strong>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // 7. Observability Dashboard (Orchestrator)
 interface ObservabilityDashboardProps {
   initialLatency?: number;
@@ -945,6 +1266,13 @@ export const ObservabilityDashboard: React.FC<ObservabilityDashboardProps> = ({
           currentUsageWh={totalEnergyWh}
           currentUsageWaterMl={totalWaterMl}
           onModelChange={setSelectedModel}
+        />
+
+        {/* Knowledge Graph Topology View (Inspired by Understand-Anything) */}
+        <TelemetryKnowledgeGraph
+          totalWaterMl={totalWaterMl}
+          totalEnergyWh={totalEnergyWh}
+          isStreaming={isStreaming}
         />
 
         {exportTriggered && (
