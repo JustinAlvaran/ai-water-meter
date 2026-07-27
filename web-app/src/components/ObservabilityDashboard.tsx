@@ -32,8 +32,8 @@ export const LatencyGauge: React.FC<LatencyGaugeProps> = ({ value, warningThresh
       style={{
         padding: "var(--space-md)",
         borderRadius: "8px",
-        borderWidth: "1px",
-        borderStyle: "solid",
+        background: "var(--surface-panel)",
+        border: "1px solid var(--border-subtle)",
         backdropFilter: "blur(12px)"
       }}
       data-testid="latency-gauge"
@@ -43,14 +43,17 @@ export const LatencyGauge: React.FC<LatencyGaugeProps> = ({ value, warningThresh
         style={{
           display: "block",
           fontSize: "var(--fs-caption)",
-          color: "var(--color-text-secondary)"
+          color: "var(--color-text-secondary)",
+          fontFamily: "var(--font-display)",
+          textTransform: "uppercase",
+          letterSpacing: "0.05em"
         }}
       >
         Latency:
       </span>
       <strong
         className="value"
-        style={{ fontSize: "var(--fs-h2)", fontFamily: "var(--font-display)" }}
+        style={{ fontSize: "var(--fs-h2)", fontFamily: "var(--font-mono)", fontWeight: 700 }}
       >
         {displayValue}
       </strong>

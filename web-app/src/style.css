@@ -1,9 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;850;900&family=Space+Grotesk:wght@400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap");
 
 :root {
+  /* Surface Hierarchy (Linear & Geist Dark Mode System) */
+  --surface-base: #080b11;
+  --surface-panel: #0f1420;
+  --surface-card: #161d2f;
+  --surface-hover: #1e263d;
+
+  /* Border & Glow System */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(0, 240, 255, 0.3);
+  --color-border: rgba(0, 240, 255, 0.12);
+  --color-border-light: rgba(255, 255, 255, 0.06);
+
   /* Color System */
-  --color-bg: #030611;
-  --color-panel: rgba(10, 15, 30, 0.55);
+  --color-bg: #080b11;
+  --color-panel: #0f1420;
   --color-cyan: #00f0ff;
   --color-cyan-glow: rgba(0, 240, 255, 0.18);
   --color-blue: #3b82f6;
@@ -13,22 +25,20 @@
   --color-text-primary: #f9fafb;
   --color-text-secondary: #9ca3af;
   --color-text-muted: #6b7280;
-  --color-border: rgba(0, 240, 255, 0.08);
-  --color-border-light: rgba(255, 255, 255, 0.04);
 
   /* Fonts */
   --font-display: "Space Grotesk", sans-serif;
   --font-body: "Outfit", sans-serif;
   --font-mono: "Space Mono", monospace;
 
-  /* Fluid Spacing Scale (clamp-based) */
+  /* Fluid Spacing Scale (Rule 6 Mandate) */
   --space-xs: clamp(0.5rem, 1.2vw, 0.75rem);
   --space-sm: clamp(0.75rem, 1.8vw, 1.125rem);
   --space-md: clamp(1rem, 2.5vw, 1.625rem);
   --space-lg: clamp(1.5rem, 3.8vw, 2.5rem);
   --space-xl: clamp(2rem, 5vw, 3.5rem);
 
-  /* Fluid Typography Scale (clamp-based) */
+  /* Fluid Typography Scale (Rule 6 Mandate) */
   --fs-h1: clamp(2rem, 5.5vw, 3.8rem);
   --fs-h2: clamp(1.35rem, 3.2vw, 2.1rem);
   --fs-h3: clamp(1.05rem, 2.2vw, 1.35rem);
